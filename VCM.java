@@ -18,6 +18,10 @@ class Student {
     public Student(String studentId) {
         this.studentId = studentId;
     }
+
+    public String getId() {
+        return studentId;
+    }
 }
 
 class Assignment {
@@ -30,11 +34,11 @@ class Assignment {
     }
 }
 
-public class VCM {
+public class VirtualClassroomManager {
     private Map<String, Classroom> classrooms;
     private Map<String, Student> students;
 
-    public VCM() {
+    public VirtualClassroomManager() {
         this.classrooms = new HashMap<>();
         this.students = new HashMap<>();
     }
@@ -58,9 +62,15 @@ public class VCM {
     }
 
     public void listClassrooms() {
-        System.out.println("Classrooms:");
-        for (Classroom classroom : classrooms.values()) {
-            System.out.println(classroom.name);
+        if (classrooms.isEmpty()) {
+            System.out.println("No classrooms exist.");
+        } else {
+            System.out.println("List of Classrooms:");
+            List<String> classroomNames = new ArrayList<>(classrooms.keySet());
+            Collections.sort(classroomNames);
+            for (String classroomName : classroomNames) {
+                System.out.println(classroomName);
+            }
         }
     }
 
@@ -78,9 +88,15 @@ public class VCM {
 
     public void listStudents(String className) {
         if (classrooms.containsKey(className)) {
-            System.out.println("Students in " + className + ":");
-            for (Student student : classrooms.get(className).students) {
-                System.out.println(student.studentId);
+            if (classrooms.get(className).students.isEmpty()) {
+                System.out.println("No students in " + className + ".");
+            } else {
+                System.out.println("List of Students in " + className + ":");
+                List<Student> students = new ArrayList<>(classrooms.get(className).students);
+                Collections.sort(students, Comparator.comparing(Student::getId));
+                for (Student student : students) {
+                    System.out.println(student.getId());
+                }
             }
         } else {
             System.out.println("Classroom " + className + " does not exist.");
@@ -113,7 +129,7 @@ public class VCM {
     }
 
     public static void main(String[] args) {
-        VCM manager = new VCM();
+        VirtualClassroomManager manager = new VirtualClassroomManager();
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
@@ -134,7 +150,12 @@ public class VCM {
                 manager.scheduleAssignment(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
             } else if (input[0].equals("submit_assignment")) {
                 manager.submitAssignment(input[1], input[2], String.join(" ", Arrays.copyOfRange(input, 3, input.length)));
-            } else {
+            } 
+            else if (input[0].equals("exit")) {
+        System.out.println("Exiting program.");
+        break;
+            }
+            else {
                 System.out.println("Invalid command.");
             }
         }
