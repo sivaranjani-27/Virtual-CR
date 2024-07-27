@@ -133,7 +133,7 @@ public class VirtualClassroomManager {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.print("Enter command: ");
+            System.out.print("\nEnter command: ");
             String[] input = scanner.nextLine().split(" ");
 
             if (input[0].equals("add_classroom")) {
