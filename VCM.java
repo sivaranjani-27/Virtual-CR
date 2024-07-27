@@ -4,11 +4,13 @@ class Classroom {
     String name;
     List<Student> students;
     List<Assignment> assignments;
+    Map<String, Boolean> attendance;
 
     public Classroom(String name) {
         this.name = name;
         this.students = new ArrayList<>();
         this.assignments = new ArrayList<>();
+        this.attendance = new HashMap<>();
     }
 }
 
@@ -80,6 +82,7 @@ public class VirtualClassroomManager {
                 students.put(studentId, new Student(studentId));
             }
             classrooms.get(className).students.add(students.get(studentId));
+            classrooms.get(className).attendance.put(studentId, false);
             System.out.println("Student " + studentId + " has been enrolled in " + className + ".");
         } else {
             System.out.println("Classroom " + className + " does not exist.");
@@ -128,6 +131,30 @@ public class VirtualClassroomManager {
         }
     }
 
+    public void takeAttendance(String className, String studentId) {
+        if (classrooms.containsKey(className)) {
+            if (classrooms.get(className).attendance.containsKey(studentId)) {
+                classrooms.get(className).attendance.put(studentId, true);
+                System.out.println("Attendance marked for Student " + studentId + " in " + className + ".");
+            } else {
+                System.out.println("Student " + studentId + " not found in " + className + ".");
+            }
+        } else {
+            System.out.println("Classroom " + className + " does not exist.");
+        }
+    }
+
+    public void viewAttendance(String className) {
+        if (classrooms.containsKey(className)) {
+            System.out.println("Attendance for " + className + ":");
+            for (Map.Entry<String, Boolean> entry : classrooms.get(className).attendance.entrySet()) {
+                System.out.println(entry.getKey() + ": " + (entry.getValue() ? "Present" : "Absent"));
+            }
+        } else {
+            System.out.println("Classroom " + className + " does not exist.");
+        }
+    }
+
     public static void main(String[] args) {
         VirtualClassroomManager manager = new VirtualClassroomManager();
         Scanner scanner = new Scanner(System.in);
@@ -150,12 +177,14 @@ public class VirtualClassroomManager {
                 manager.scheduleAssignment(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
             } else if (input[0].equals("submit_assignment")) {
                 manager.submitAssignment(input[1], input[2], String.join(" ", Arrays.copyOfRange(input, 3, input.length)));
-            } 
-            else if (input[0].equals("exit")) {
-        System.out.println("Exiting program.");
-        break;
-            }
-            else {
+            } else if (input[0].equals("take_attendance")) {
+                manager.takeAttendance(input[1], input[2]);
+            } else if (input[0].equals("view_attendance")) {
+                manager.viewAttendance(input[1]);
+            } else if (input[0].equals("exit")) {
+                System.out.println("Exiting program.");
+                break;
+            } else {
                 System.out.println("Invalid command.");
             }
         }
